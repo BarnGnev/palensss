@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --tg-color-scheme: light;
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #000000;
+            --tg-theme-hint-color: #999999;
+            --tg-theme-link-color: #0088cc;
+            --tg-theme-button-color: #0088cc;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f0f0f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--tg-theme-hint-color);
+            font-size: 14px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .menu-item {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--tg-theme-text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+            border-color: var(--tg-theme-button-color);
+        }
+
+        .menu-item-icon {
+            font-size: 32px;
+        }
+
+        .menu-item-label {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .section {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-button {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 16px;
+            color: var(--tg-theme-link-color);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--tg-theme-button-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+            margin-top: 4px;
+        }
+
+        .user-item {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .user-id {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color);
+        }
+
+        .user-action {
+            background-color: var(--tg-theme-button-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .log-item {
+            background-color: var(--tg-theme-secondary-bg-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .log-time {
+            color: var(--tg-theme-hint-color);
+        }
+
+        .log-level {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            margin-right: 6px;
+            font-size: 11px;
+        }
+
+        .log-level-info {
+            background-color: #d0e8ff;
+            color: #0066cc;
+        }
+
+        .log-level-warn {
+            background-color: #fff3cd;
+            color: #ff9800;
+        }
+
+        .log-level-error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle input[type="checkbox"] {
+            width: 40px;
+            height: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Главное меню -->
+    <div id="menu-section" class="section active">
+        <header>
+            <h1>🔑 Админ-панель</h1>
+            <p class="subtitle">Управление ботом</p>
+        </header>
+
+        <div class="menu">
+            <div class="menu-item" onclick="showSection('settings')">
+                <div class="menu-item-icon">⚙️</div>
+                <div class="menu-item-label">Настройки</div>
+            </div>
+            <div class="menu-item" onclick="showSection('users')">
+                <div class="menu-item-icon">👥</div>
+                <div class="menu-item-label">Пользователи</div>
+            </div>
+            <div class="menu-item" onclick="showSection('broadcast')">
+                <div class="menu-item-icon">📨</div>
+                <div class="menu-item-label">Рассылка</div>
+            </div>
+            <div class="menu-item" onclick="showSection('stats')">
+                <div class="menu-item-icon">📊</div>
+                <div class="menu-item-label">Статистика</div>
+            </div>
+            <div class="menu-item" onclick="showSection('logs')">
+                <div class="menu-item-icon">📋</div>
+                <div class="menu-item-label">Логи</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Настройки -->
+    <div id="settings-section" class="section">
+        <button class="back-button" onclick="showSection('menu')">← Назад</button>
+        <h2>⚙️ Настройки</h2>
+
+        <div class="form-group">
+            <label>📢 Каналы (через запятую)</label>
+            <textarea id="channels" placeholder="@channel1,@channel2"></textarea>
+            <small style="color: var(--tg-theme-hint-color);">Введи ID или username каналов</small>
+        </div>
+
+        <div class="form-group">
+            <label>🔗 Ссылка на файл</label>
+            <input type="text" id="file_url" placeholder="https://example.com/file.pdf">
+        </div>
+
+        <div class="form-group">
+            <label>✏️ Текст при /start</label>
+            <textarea id="start_text" placeholder="Текст приветствия"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>⏳ Таймер ожидания (минуты)</label>
+            <input type="number" id="wait_minutes" placeholder="5">
+        </div>
+
+        <div class="form-group">
+            <label>Включить таймер?</label>
+            <div class="toggle">
+                <input type="checkbox" id="wait_enabled">
+                <span id="wait_status">Отключен</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>⏰ Автоудаление ссылки (секунды)</label>
+            <input type="number" id="link_delete_seconds" placeholder="3600">
+        </div>
+
+        <button onclick="saveSettings()">💾 Сохранить</button>
+    </div>
+
+    <!-- Пользователи -->
+    <div id="users-section" class="section">
+        <button class="back-button" onclick="showSection('menu')">← Назад</button>
+        <h2>👥 Пользователи</h2>
+
+        <div id="users-list" style="margin-bottom: 16px;"></div>
+
+        <div class="form-group">
+            <label>ID пользователя для блокировки</label>
+            <input type="number" id="ban_user_id" placeholder="Введи ID">
+        </div>
+
+        <button onclick="banUser()">🚫 Заблокировать</button>
+    </div>
+
+    <!-- Рассылка -->
+    <div id="broadcast-section" class="section">
+        <button class="back-button" onclick="showSection('menu')">← Назад</button>
+        <h2>📨 Рассылка</h2>
+
+        <div class="form-group">
+            <label>Текст сообщения</label>
+            <textarea id="broadcast_text" placeholder="Введи текст для рассылки"></textarea>
+        </div>
+
+        <button onclick="broadcast()">📢 Отправить всем</button>
+    </div>
+
+    <!-- Статистика -->
+    <div id="stats-section" class="section">
+        <button class="back-button" onclick="showSection('menu')">← Назад</button>
+        <h2>📊 Статистика</h2>
+
+        <div class="stats" id="stats-content"></div>
+    </div>
+
+    <!-- Логи -->
+    <div id="logs-section" class="section">
+        <button class="back-button" onclick="showSection('menu')">← Назад</button>
+        <h2>📋 Логи</h2>
+
+        <div id="logs-content" style="margin-top: 16px;"></div>
+    </div>
+</div>
+
+<script>
+    // Telegram Web App API
+    let tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
+
+    function showSection(sectionName) {
+        // Скрываем все секции
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+        // Показываем нужную
+        document.getElementById(sectionName + '-section').classList.add('active');
+
+        // Загружаем данные если нужно
+        if (sectionName === 'users') loadUsers();
+        if (sectionName === 'stats') loadStats();
+        if (sectionName === 'logs') loadLogs();
+        if (sectionName === 'settings') loadSettings();
+    }
+
+    async function loadSettings() {
+        try {
+            const response = await fetch('/api/admin/data');
+            const data = await response.json();
+
+            if (data.channels) {
+                document.getElementById('channels').value = data.channels.map(c => c.id).join(',');
+            }
+            document.getElementById('file_url').value = data.file_url || '';
+            document.getElementById('start_text').value = data.start_text || '';
+            document.getElementById('wait_minutes').value = data.wait_minutes || 0;
+            document.getElementById('wait_enabled').checked = data.wait_enabled || false;
+            document.getElementById('link_delete_seconds').value = data.link_delete_seconds || 0;
+            updateWaitStatus();
+        } catch (e) {
+            console.error('Ошибка загрузки настроек:', e);
+        }
+    }
+
+    async function saveSettings() {
+        try {
+            const channels = document.getElementById('channels').value
+                .split(',')
+                .filter(c => c.trim())
+                .map(c => ({ id: c.trim(), name: c.trim(), url: `https://t.me/${c.trim().lstrip('@')}` }));
+
+            const data = {
+                channels: channels,
+                file_url: document.getElementById('file_url').value,
+                start_text: document.getElementById('start_text').value,
+                wait_minutes: parseInt(document.getElementById('wait_minutes').value) || 0,
+                wait_enabled: document.getElementById('wait_enabled').checked,
+                link_delete_seconds: parseInt(document.getElementById('link_delete_seconds').value) || 0,
+            };
+
+            const response = await fetch('/api/admin/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('✅ Настройки сохранены!');
+            } else {
+                alert('❌ Ошибка при сохранении');
+            }
+        } catch (e) {
+            alert('❌ Ошибка: ' + e.message);
+        }
+    }
+
+    function updateWaitStatus() {
+        const enabled = document.getElementById('wait_enabled').checked;
+        document.getElementById('wait_status').textContent = enabled ? '✅ Включен' : '❌ Отключен';
+    }
+
+    document.getElementById('wait_enabled').addEventListener('change', updateWaitStatus);
+
+    async function loadUsers() {
+        try {
+            const response = await fetch('/api/admin/users');
+            const users = await response.json();
+
+            const list = document.getElementById('users-list');
+            list.innerHTML = '';
+
+            if (users.length === 0) {
+                list.innerHTML = '<p style="color: var(--tg-theme-hint-color);">Пользователей нет</p>';
+                return;
+            }
+
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'user-item';
+                item.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-name">${user.username || user.first_name}</div>
+                        <div class="user-id">ID: ${user.id}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        } catch (e) {
+            console.error('Ошибка загрузки пользователей:', e);
+        }
+    }
+
+    async function loadStats() {
+        try {
+            const response = await fetch('/api/admin/stats');
+            const stats = await response.json();
+
+            const content = document.getElementById('stats-content');
+            content.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Всего пользователей</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.subscribed}</div>
+                    <div class="stat-label">Подписаны</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.in_channel}</div>
+                    <div class="stat-label">В канале</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.banned}</div>
+                    <div class="stat-label">Заблокированы</div>
+                </div>
+            `;
+        } catch (e) {
+            console.error('Ошибка загрузки статистики:', e);
+        }
+    }
+
+    async function loadLogs() {
+        try {
+            const response = await fetch('/api/admin/logs');
+            const logs = await response.json();
+
+            const content = document.getElementById('logs-content');
+            content.innerHTML = '';
+
+            logs.reverse().forEach(log => {
+                const item = document.createElement('div');
+                item.className = 'log-item';
+
+                const levelClass = `log-level-${log.level.toLowerCase()}`;
+
+                item.innerHTML = `
+                    <div class="log-time">${log.time}</div>
+                    <span class="log-level ${levelClass}">${log.level}</span>
+                    <span>${log.message}</span>
+                `;
+                content.appendChild(item);
+            });
+        } catch (e) {
+            console.error('Ошибка загрузки логов:', e);
+        }
+    }
+
+    async function banUser() {
+        const userId = document.getElementById('ban_user_id').value;
+        if (!userId) {
+            alert('Введи ID пользователя');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, action: 'ban' })
+            });
+
+            if (response.ok) {
+                alert('✅ Пользователь заблокирован');
+                document.getElementById('ban_user_id').value = '';
+                loadUsers();
+            }
+        } catch (e) {
+            alert('❌ Ошибка: ' + e.message);
+        }
+    }
+
+    async function broadcast() {
+        const text = document.getElementById('broadcast_text').value;
+        if (!text) {
+            alert('Введи текст для рассылки');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, target: 'all' })
+            });
+
+            const result = await response.json();
+            alert(`✅ Отправлено: ${result.sent}\n❌ Ошибок: ${result.errors}`);
+            document.getElementById('broadcast_text').value = '';
+        } catch (e) {
+            alert('❌ Ошибка: ' + e.message);
+        }
+    }
+
+    // Инициализация
+    showSection('menu');
+</script>
+</body>
+</html>
